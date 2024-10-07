@@ -87,6 +87,10 @@ pipeline {
             }
         }
         stage('Update GitHub') {
+           environment {
+                GIT_REPO_NAME = "3-tier-project"
+                GIT_USER_NAME = 'GIT_USERNAME'
+            }
             steps {
                dir('Kubernetes-Manifests-file/Frontend') {
                 withCredentials([[$class: 'UsernamePasswordMultiBinding', 
