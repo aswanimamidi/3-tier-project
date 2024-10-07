@@ -24,7 +24,7 @@ pipeline {
         stage('Sonarqube Analysis') {
             steps {
                 dir('Application-Code/frontend') {
-                   withSonarQubeEnv(credentialsId: 'sonar-server') {
+                   withSonarQubeEnv('sonar-server') {
                         sh ''' $SCANNER_HOME/bin/sonar-scanner \
                                     -Dsonar.projectKey=jenkins \
                                      -Dsonar.sources=. \
