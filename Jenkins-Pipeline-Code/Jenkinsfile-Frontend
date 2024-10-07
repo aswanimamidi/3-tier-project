@@ -86,14 +86,12 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/aswanimamidi/3-tier-project.git'
             }
         }
-        stage('Update Deployment file') {
-            environment {
-                GIT_REPO_NAME = "3-tier-project"
-                GIT_USER_NAME = "aswanimamidi"
-            }
+        stage('Update GitHub') {
             steps {
-                dir('Kubernetes-Manifests-file/Frontend') {
-                    withCredentials('github','git_token') {
+               dir('Kubernetes-Manifests-file/Frontend') {
+                withCredentials([[$class: 'UsernamePasswordMultiBinding', 
+                                  credentialsId: 'git_token', 
+                                  usernameVariable: 'github',]]) {
                         sh '''
                             git config user.email "aswanipaidi49@gmail.com"
                             git config user.name "aswanimamidi"
