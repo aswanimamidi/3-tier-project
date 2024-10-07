@@ -91,22 +91,25 @@ pipeline {
                 GIT_REPO_NAME = "3-tier-project"
                 GIT_USER_NAME = 'GIT_USERNAME'
             }
+              
+     stage('Update GitHub') {
             steps {
-               dir('Kubernetes-Manifests-file/Frontend') {
-                withCredentials([[$class: 'UsernamePasswordMultiBinding', 
-                                  credentialsId: 'github', 
-                                  usernameVariable: 'GIT_USERNAME', 
-                                  passwordVariable: 'GIT_PASSWORD']]) {
-                        sh '''
-                            git config user.email "aswanipaidi49@gmail.com"
-                            git config user.name "aswanimamidi"
-                            BUILD_NUMBER=${BUILD_NUMBER}
-                            echo $BUILD_NUMBER
-                            sed -i "s#image:.*#image: $REPOSITORY_URI$AWS_ECR_REPO_NAME:$BUILD_NUMBER#g" deployment.yaml
-                            git add .
-                            git commit -m "Update deployment Image to version \${BUILD_NUMBER}"
-                            git push https://github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main
-        
+                dir('Kubernetes-Manifests-file/Frontend') {
+                    withCredentials([string(credentialsId: 'git-token', variable: 'GIT_TOKEN')]) {
+                     sh '''
+                        git config --global user.email "aswanipaidi49@gmail.com"
+                        git config --global user.name "aswanimamidi"
+                        # Update the image version in deployment.yaml
+                        sed -i 's#image:.*#image: ****.dkr.ecr.us-east-1.amazonaws.com/****:14#g' deployment.yaml
+                        git add .
+                        git commit -m 'Update deployment Image to version 14'
+                        git push https://aswanimamidi:${GIT_TOKEN}@github.com/aswanimamidi/3-tier-project.git HEAD:main
+                    '''
+                }
+            }
+        }
+    }
+}
                         '''
                     }
                 }
