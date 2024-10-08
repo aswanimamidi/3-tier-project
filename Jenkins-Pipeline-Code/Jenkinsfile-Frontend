@@ -42,6 +42,7 @@ pipeline {
                 }
             }
         }
+      }
         stage('OWASP Dependency-Check Scan') {
             steps {
                 dir('Application-Code/frontend') {
