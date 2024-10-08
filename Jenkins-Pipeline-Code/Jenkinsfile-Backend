@@ -5,9 +5,9 @@ pipeline {
         nodejs 'nodejs'
     }
     environment  {
-        SCANNER_HOME=tool 'sonar-scanner'
-        AWS_ACCOUNT_ID = credentials('ACCOUNT_ID')
-        AWS_ECR_REPO_NAME = credentials('ECR_REPO2')
+        SCANNER_HOME=tool 'Sonar-Scanner'
+        AWS_ACCOUNT_ID = credentials('ACCOUNT-ID')
+        AWS_ECR_REPO_NAME = credentials('ECR-REPO2')
         AWS_DEFAULT_REGION = 'ap-south-1'
         REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/"
     }
@@ -19,7 +19,7 @@ pipeline {
         }
         stage('Checkout from Git') {
             steps {
-                git branch: 'main', url: 'https://github.com/CloudTechDevOps/fpjt.git'
+                git branch: 'main', url: 'https://github.com/aswanimamidi/3-tier-project.git'
             }
         }
         stage('Sonarqube Analysis') {
@@ -27,8 +27,10 @@ pipeline {
                 dir('Application-Code/backend') {
                     withSonarQubeEnv('sonar-server') {
                         sh ''' $SCANNER_HOME/bin/sonar-scanner \
-                        -Dsonar.projectName=three-tier-backend \
-                        -Dsonar.projectKey=three-tier-backend '''
+                        -Dsonar.projectKey=back-end \
+                        -Dsonar.sources=. \
+                        -Dsonar.host.url=http://3.83.249.203:9000 \
+                        -Dsonar.login=squ_963cbbc3c51a7a5c9be1dd6e2c80a11ad599b1ac '''
                     }
                 }
             }
@@ -36,14 +38,16 @@ pipeline {
         stage('Quality Check') {
             steps {
                 script {
-                    waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token' 
+                    timeout(time: 1, unit: 'HOURS') {
+                    waitForQualityGate abortPipeline: false 
                 }
             }
         }
+    }
         stage('OWASP Dependency-Check Scan') {
             steps {
                 dir('Application-Code/backend') {
-                    dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', odcInstallation: 'DP-Check'
+                    dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', odcInstallation: 'dp-ckeck'
                     dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
                 }
             }
@@ -82,20 +86,20 @@ pipeline {
         }
         stage('Checkout Code') {
             steps {
-                git branch: 'main', url: 'https://github.com/CloudTechDevOps/fpjt.git'
+                git branch: 'main', url: 'https://github.com/aswanimamidi/3-tier-project.git'
             }
         }
         stage('Update Deployment file') {
             environment {
-                GIT_REPO_NAME = "fpjt"
-                GIT_USER_NAME = "CloudTechDevOps"
+                GIT_REPO_NAME = "3-tier-project"
+                GIT_USER_NAME = "aswanimamidi"
             }
             steps {
                 dir('Kubernetes-Manifests-file/Backend') {
                     withCredentials([string(credentialsId: 'github', variable: 'git_token')]) {
                         sh '''
-                            git config user.email "cloud87777@gmail.com"
-                            git config user.name "CloudTechDevOps"
+                            git config user.email "aswanipaidi49@gmail.com"
+                            git config user.name "aswanimamidi"
                             BUILD_NUMBER=${BUILD_NUMBER}
                             echo $BUILD_NUMBER
                             sed -i "s#image:.*#image: $REPOSITORY_URI$AWS_ECR_REPO_NAME:$BUILD_NUMBER#g" deployment.yaml
@@ -109,3 +113,5 @@ pipeline {
         }
     }
 }
+           
+    
