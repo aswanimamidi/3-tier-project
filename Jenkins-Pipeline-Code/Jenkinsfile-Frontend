@@ -5,8 +5,8 @@ pipeline {
     }
     environment  {
         SCANNER_HOME=tool 'sonar-scanner'
-        AWS_ACCOUNT_ID = credentials('account-id')
-        AWS_ECR_REPO_NAME = credentials('repo-name')
+        AWS_ACCOUNT_ID = credentials('ACCOUNT-ID')
+        AWS_ECR_REPO_NAME = credentials('ECR-REPO1')
         AWS_DEFAULT_REGION = 'us-east-1'
         REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/"
     }
@@ -28,8 +28,8 @@ pipeline {
                         sh ''' $SCANNER_HOME/bin/sonar-scanner \
                                     -Dsonar.projectKey=jenkins \
                                      -Dsonar.sources=. \
-                                     -Dsonar.host.url=http://3.86.201.108:9000 \
-                                    -Dsonar.login=squ_ca8e90dae25fd17101b1d114322d9afe31539cc5 '''
+                                     -Dsonar.host.url=http://3.83.249.203:9000 \
+                                    -Dsonar.login=squ_963cbbc3c51a7a5c9be1dd6e2c80a11ad599b1ac '''
                     }
                 }
             }
