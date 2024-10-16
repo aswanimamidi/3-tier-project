@@ -4,9 +4,9 @@ pipeline {
         nodejs 'nodejs'
     }
     environment  {
-        SCANNER_HOME=tool 'Sonar-Scanner'
+        SCANNER_HOME=tool 'sonar-scanner'
         AWS_ACCOUNT_ID = credentials('ACCOUNT-ID')
-        AWS_ECR_REPO_NAME = credentials('ECR-REPO1')
+        AWS_ECR_REPO_NAME = credentials('ecr-repo1')
         AWS_DEFAULT_REGION = 'us-east-1'
         REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/"
     }
@@ -26,10 +26,10 @@ pipeline {
                 dir('Application-Code/frontend') {
                     withSonarQubeEnv('sonar-server') {
                         sh ''' $SCANNER_HOME/bin/sonar-scanner \
-                         -Dsonar.projectKey=jenkins \
-                                     -Dsonar.sources=. \
-                                     -Dsonar.host.url=http://3.83.249.203:9000 \
-                                    -Dsonar.login=squ_963cbbc3c51a7a5c9be1dd6e2c80a11ad599b1ac '''
+                           -Dsonar.projectKey=jenkins \
+                            -Dsonar.sources=. \
+                            -Dsonar.host.url=http://52.206.213.92:9000 \
+                             -Dsonar.login=squ_4a2fa7cdcff9e2d547c9f04f3c7cf4212557c8e6 '''
                     }
                 }
             }
@@ -95,7 +95,7 @@ pipeline {
             }
             steps {
                 dir('Kubernetes-Manifests-file/Frontend') {
-                    withCredentials([string(credentialsId: 'github', variable: 'git_token')]) {
+                    withCredentials([string(credentialsId: 'git-token', variable: 'git_token')]) {
                         sh '''
                             git config user.email "aswanipaidi49@gmail.com"
                             git config user.name "aswanimamidi"
