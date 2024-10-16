@@ -10,7 +10,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: narni.co.in
+    - host: ashimamidi.shop
       http:
         paths:
           - path: /api
