@@ -7,7 +7,7 @@ pipeline {
     environment  {
         SCANNER_HOME=tool 'Sonar-Scanner'
         AWS_ACCOUNT_ID = credentials('ACCOUNT-ID')
-        AWS_ECR_REPO_NAME = credentials('ECR-REPO2')
+        AWS_ECR_REPO_NAME = credentials('ecr-repo2')
         AWS_DEFAULT_REGION = 'us-east-1'
         REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/"
     }
@@ -27,10 +27,10 @@ pipeline {
                 dir('Application-Code/backend') {
                     withSonarQubeEnv('sonar-server') {
                         sh ''' $SCANNER_HOME/bin/sonar-scanner \
-                        -Dsonar.projectKey=back-end \
-                        -Dsonar.sources=. \
-                        -Dsonar.host.url=http://3.83.249.203:9000 \
-                        -Dsonar.login=squ_963cbbc3c51a7a5c9be1dd6e2c80a11ad599b1ac '''
+                            -Dsonar.projectKey=back-end \
+                             -Dsonar.sources=. \
+                             -Dsonar.host.url=http://52.206.213.92:9000 \
+                             -Dsonar.login=squ_4a2fa7cdcff9e2d547c9f04f3c7cf4212557c8e6 '''
                     }
                 }
             }
@@ -47,7 +47,7 @@ pipeline {
         stage('OWASP Dependency-Check Scan') {
             steps {
                 dir('Application-Code/backend') {
-                    dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', odcInstallation: 'dp-ckeck'
+                    dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', odcInstallation: 'dp-check'
                     dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
                 }
             }
@@ -96,7 +96,7 @@ pipeline {
             }
             steps {
                 dir('Kubernetes-Manifests-file/Backend') {
-                    withCredentials([string(credentialsId: 'github', variable: 'git_token')]) {
+                    withCredentials([string(credentialsId: 'git-token', variable: 'git_token')]) {
                         sh '''
                             git config user.email "aswanipaidi49@gmail.com"
                             git config user.name "aswanimamidi"
