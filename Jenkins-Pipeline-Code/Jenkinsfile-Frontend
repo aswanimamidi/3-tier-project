@@ -90,8 +90,9 @@ pipeline {
         }
         stage('Update Deployment file') {
             environment {
-                GIT_REPO_NAME = "3-tier-project"
-                GIT_USER_NAME = "aswanimamidi"
+                git_token = credentials('github')
+                GIT_REPO_NAME = '3-tier-project'
+                GIT_USER_NAME = 'aswanimamidi'
             }
             steps {
                 dir('Kubernetes-Manifests-file/Frontend') {
