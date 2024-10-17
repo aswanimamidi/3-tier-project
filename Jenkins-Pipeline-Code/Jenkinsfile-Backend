@@ -6,8 +6,8 @@ pipeline {
     }
     environment  {
         SCANNER_HOME=tool 'sonar-scanner'
-        AWS_ACCOUNT_ID = credentials('ACCOUNT-ID')
-        AWS_ECR_REPO_NAME = credentials('ecr-repo2')
+        AWS_ACCOUNT_ID = credentials('account-id')
+        AWS_ECR_REPO_NAME = credentials('aws-repo2')
         AWS_DEFAULT_REGION = 'us-east-1'
         REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/"
     }
@@ -28,9 +28,9 @@ pipeline {
                     withSonarQubeEnv('sonar-server') {
                         sh ''' $SCANNER_HOME/bin/sonar-scanner \
                             -Dsonar.projectKey=back-end \
-                             -Dsonar.sources=. \
-                             -Dsonar.host.url=http://52.206.213.92:9000 \
-                             -Dsonar.login=squ_4a2fa7cdcff9e2d547c9f04f3c7cf4212557c8e6 '''
+                                -Dsonar.sources=. \
+                               -Dsonar.host.url=http://52.91.27.34:9000 \
+                               -Dsonar.login=squ_cbfaa184c2bffae6fa25dda1cfe0441852db63a8 '''
                     }
                 }
             }
