@@ -32,3 +32,5 @@ spec:
             value: "http://api:3500/api/tasks"
         ports:
         - containerPort: 3000
+      # Adding the frontend label for easier extraction
+      frontend: 381492031718.dkr.ecr.us-east-1.amazonaws.com/front-end
