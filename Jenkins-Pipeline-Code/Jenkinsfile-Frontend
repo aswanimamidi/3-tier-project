@@ -9,6 +9,8 @@ pipeline {
         AWS_ECR_REPO_NAME = credentials('aws-repo1')
         AWS_DEFAULT_REGION = 'us-east-1'
         REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/"
+        GIT_REPO_NAME = '3-tier-project'
+        GIT_USER_NAME = 'aswanimamidi'
     }
     stages {
         stage('Cleaning Workspace') {
@@ -25,11 +27,7 @@ pipeline {
             steps {
                 dir('Application-Code/frontend') {
                     withSonarQubeEnv('sonar-server') {
-                        sh ''' $SCANNER_HOME/bin/sonar-scanner \
-                             -Dsonar.projectKey=front-end \
-                             -Dsonar.sources=. \
-                              -Dsonar.host.url=http://52.91.27.34:9000 \
-                              -Dsonar.login=squ_cbfaa184c2bffae6fa25dda1cfe0441852db63a8 '''
+                         sh "$SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=three-tier-frontend -Dsonar.projectKey=three-tier-frontend"
                     }
                 }
             }
@@ -83,35 +81,30 @@ pipeline {
                 sh 'trivy image ${REPOSITORY_URI}${AWS_ECR_REPO_NAME}:${BUILD_NUMBER} > trivyimage.txt' 
             }
         }
-        stage('Checkout Code') {
-            steps {
-                git branch: 'main', url: 'https://github.com/aswanimamidi/3-tier-project.git'
-            }
-        }
         stage('Update Deployment file') {
-            environment {
-                git_token = credentials('github')
-                GIT_REPO_NAME = '3-tier-project'
-                GIT_USER_NAME = 'aswanimamidi'
-            }
             steps {
                 dir('Kubernetes-Manifests-file/Frontend') {
-                    withCredentials([string(credentialsId: 'github', variable: 'git_token')]) {
-                        sh '''
+                    withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
+                        script {
+                            sh '''
                             git config user.email "aswanipaidi49@gmail.com"
                             git config user.name "aswanimamidi"
                             BUILD_NUMBER=${BUILD_NUMBER}
                             echo $BUILD_NUMBER
-                            sed -i "s#image:.*#image: $REPOSITORY_URI$AWS_ECR_REPO_NAME:$BUILD_NUMBER#g" deployment.yaml
-                            git add .
+                            imageTag=$(grep -oP '(?<=frontend:)[^ ]+' deployment.yaml)
+                            echo $imageTag
+                            sed -i "s/${AWS_ECR_REPO_NAME}:${imageTag}/${AWS_ECR_REPO_NAME}:${BUILD_NUMBER}/" deployment.yaml
+                            git add deployment.yaml
                             git commit -m "Update deployment Image to version \${BUILD_NUMBER}"
-                            git push https://${git_token}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main
-        
+                            git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main
                         '''
+                        }
                     }
                 }
             }
         }
     }
-}
+   }                 
+    
+
 
