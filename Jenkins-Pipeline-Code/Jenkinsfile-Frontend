@@ -28,9 +28,9 @@ pipeline {
                 dir('Application-Code/frontend') {
                     withSonarQubeEnv('sonar-server') {
                          sh ''' $SCANNER_HOME/bin/sonar-scanner \
-                             -Dsonar.projectKey=front-end \
-                              -Dsonar.sources=. \
-                              -Dsonar.host.url=http://54.224.123.29:9000 \
+                             -Dsonar.projectKey=frontend \
+                             -Dsonar.sources=. \
+                             -Dsonar.host.url=http://54.224.123.29:9000 \
                              -Dsonar.login=sqp_3c1a79a0a7588ac080f170520482e18a324e8069 '''
                     }
                 }
