@@ -24,11 +24,11 @@ spec:
       imagePullSecrets:
       - name: ecr-registry-secret
       containers:
-      - name: frontend
-        image: 381492031718.dkr.ecr.us-east-1.amazonaws.com/front-end:15
+      - name: front-end
+        image: 381492031718.dkr.ecr.us-east-1.amazonaws.com/front-end
         imagePullPolicy: Always
         env:
           - name: REACT_APP_BACKEND_URL
-            value: "http://ashimamidi.shop/api/tasks"
+            value: "http://api:3500/api/tasks"
         ports:
         - containerPort: 3000
