@@ -26,7 +26,7 @@ pipeline {
         stage('Sonarqube Analysis') {
             steps {
                 dir('Application-Code/frontend') {
-                    withSonarQubeEnv('sonar-server') {
+                    withSonarQubeEnv('sonar') {
                          sh ''' $SCANNER_HOME/bin/sonar-scanner \
                                -Dsonar.projectKey=front \
                                -Dsonar.sources=. \
