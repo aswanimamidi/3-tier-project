@@ -25,12 +25,12 @@ pipeline {
         stage('Sonarqube Analysis') {
             steps {
                 dir('Application-Code/backend') {
-                    withSonarQubeEnv('sonar-server') {
+                    withSonarQubeEnv('sonar') {
                         sh ''' $SCANNER_HOME/bin/sonar-scanner \
-                            -Dsonar.projectKey=jenkins \
-                              -Dsonar.sources=. \
-                             -Dsonar.host.url=http://54.224.123.29:9000 \
-                             -Dsonar.login=sqp_3c1a79a0a7588ac080f170520482e18a324e8069 '''
+                           -Dsonar.projectKey=back-end \
+                            -Dsonar.sources=. \
+                           -Dsonar.host.url=http://52.207.255.128:9000 \
+                           -Dsonar.login=squ_655e90936d79a98918e9337a1d04219a3d61d086 '''
                     }
                 }
             }
